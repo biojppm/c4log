@@ -8,7 +8,7 @@
 /** @defgroup log */
 
 namespace c4 {
-namespace log {
+namespace logns {
 
 /** a typedef for the function pointer to the function that dumps
  * characters to the log
@@ -98,7 +98,6 @@ inline Sep sep(char c)
     return Sep(c);
 }
 
-namespace detail {
 
 // terminate the recursion
 template< class Arg >
@@ -130,8 +129,6 @@ void _printsep(Sep s, Arg const& a, More const& ...args)
     _printsep(s, args...);
 }
 
-} // namespace detail
-
 
 /** print multiple variables, with a space separating them. Prints
     newline at the end.
@@ -139,7 +136,7 @@ void _printsep(Sep s, Arg const& a, More const& ...args)
 template< class... Args >
 void print(Args const& ...args)
 {
-    detail::_print(args...);
+    _print(args...);
     printvar('\n');
 }
 
@@ -149,7 +146,7 @@ void print(Args const& ...args)
 template< class... Args >
 void printsep(Sep s, Args const& ...args)
 {
-    detail::_printsep(s, args...);
+    _printsep(s, args...);
     printvar('\n');
 }
 
@@ -157,8 +154,6 @@ void printsep(Sep s, Args const& ...args)
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-
-namespace detail {
 
 /// terminate the recursion
 inline void _log(csubstr const fmt)
@@ -182,8 +177,6 @@ void _log(csubstr const fmt, Arg const& a, More const& ...args)
     }
 }
 
-} // namespace detail
-
 
 /** log a formatted message. For example:
 @begincode
@@ -193,11 +186,16 @@ log("the {} ate the {}", "cat", "mouse");
 template< class... Args >
 void log(csubstr const fmt, Args const& ...args)
 {
-    detail::_log(fmt, args...);
+    _log(fmt, args...);
     printvar('\n');
 }
 
-} // namespace log
+} // namespace logns
+using logns::_log;
+using logns::log;
+using logns::_print;
+using logns::print;
+using logns::printvar;
 } // namespace c4
 
 #endif // _c4_LOG_LOG_HPP_

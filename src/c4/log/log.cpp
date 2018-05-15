@@ -9,7 +9,7 @@
 #include <cstddef>
 
 namespace c4 {
-namespace log {
+namespace logns {
 
 thread_local const char* ScopedTermColor::curr = "";
 
@@ -83,5 +83,5 @@ void PrintVarBuf::resize(size_t sz)
 
 } // namespace detail
 
-} // namespace log
+} // namespace logns
 } // namespace c4

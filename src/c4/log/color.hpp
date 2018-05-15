@@ -8,7 +8,7 @@
 /** @defgroup termcolor */
 
 namespace c4 {
-namespace log {
+namespace logns {
 
 /** a RAII-style class that sets the terminal color
  * @ingroup termcolor */
@@ -89,7 +89,7 @@ constexpr ccptr bg_reset         = "\033[49m",
                 bg_light_cyan    = "\033[106m",
                 bg_white         = "\033[107m";
 
-} // namespace log
+} // namespace logns
 } // namespace c4
 
 

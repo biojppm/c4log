@@ -3,10 +3,13 @@
 #include "c4/memory_resource.hpp"
 
 #include <stdio.h>
-#ifdef _MSC_VER
-#   include <WinBase.h>
-#endif
 #include <cstddef>
+
+#ifdef C4_WIN
+#   include "c4/windows_push.hpp"
+#   include <windef.h>
+#   include <debugapi.h>
+#endif
 
 namespace c4 {
 namespace logns {

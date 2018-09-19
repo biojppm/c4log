@@ -161,6 +161,7 @@ inline void _log(csubstr const fmt)
     printvar(fmt);
 }
 
+/** log a formatted message, without printing newline */
 template< class Arg, class... More >
 void _log(csubstr const fmt, Arg const& a, More const& ...args)
 {
@@ -196,6 +197,9 @@ using logns::log;
 using logns::_print;
 using logns::print;
 using logns::printvar;
+using logns::set_logpump;
+using logns::get_logpump;
+
 } // namespace c4
 
 #endif // _c4_LOG_LOG_HPP_

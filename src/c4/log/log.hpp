@@ -72,7 +72,7 @@ inline PrintVarBuf* _printvar_buf()
 } // namespace detail
 
 
-/** log a single variable
+/** print a single variable
  * @ingroup log
  */
 template< class T >
@@ -83,6 +83,12 @@ void printvar(T const& v)
     detail::logpump(buf.c_str(), buf.size());
 }
 
+template<class T, class... More>
+void printvar(T const& v, More const& ...args)
+{
+    printvar(v);
+    printvar(args...);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -125,7 +131,7 @@ template< class Arg, class... More >
 void _printsep(Sep s, Arg const& a, More const& ...args)
 {
     printvar(a);
-    printvar(s.c);
+    if(s.c) printvar(s.c);
     _printsep(s, args...);
 }
 

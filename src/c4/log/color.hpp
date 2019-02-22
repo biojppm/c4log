@@ -25,7 +25,7 @@ struct ScopedTermColor
     }
     ScopedTermColor()
     {
-        printvar(prev);
+        dump(prev);
         curr = prev;
     }
 };

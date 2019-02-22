@@ -31,14 +31,14 @@ pfn_logpump get_logpump();
 namespace detail {
 
 /** a minimal std::string-like zero-terminated char container, to be
- * used by printvar(). We do not use std::string to save us from the
+ * used by dump(). We do not use std::string to save us from the
  * dependency and also from the heavy include. */
-struct PrintVarBuf
+struct DumpBuf
 {
-    C4_NO_COPY_OR_MOVE(PrintVarBuf);
+    C4_NO_COPY_OR_MOVE(DumpBuf);
 
-    PrintVarBuf();
-    ~PrintVarBuf();
+    DumpBuf();
+    ~DumpBuf();
 
     char *buf;
     size_t len;
@@ -58,36 +58,39 @@ struct PrintVarBuf
     const char* c_str() const { return buf; }
 };
 
-inline c4::substr to_substr(PrintVarBuf const& b)
+inline c4::substr to_substr(DumpBuf const& b)
 {
     return {b.buf, b.len};
 }
 
-inline PrintVarBuf* _printvar_buf()
+inline DumpBuf* _dump_buf()
 {
-    static thread_local PrintVarBuf buf;
+    static thread_local DumpBuf buf;
     return &buf;
 }
 
 } // namespace detail
 
 
-/** print a single variable
+//-----------------------------------------------------------------------------
+
+/** dump a single variable
  * @ingroup log
  */
-template< class T >
-void printvar(T const& v)
+template<class T>
+void dump(T const& v)
 {
-    auto &buf = * detail::_printvar_buf();
+    detail::DumpBuf &buf = * detail::_dump_buf();
     c4::catrs(&buf, v);
     detail::logpump(buf.c_str(), buf.size());
 }
 
+/** dump several values without spaces between them */
 template<class T, class... More>
-void printvar(T const& v, More const& ...args)
+void dump(T const& v, More const& ...args)
 {
-    printvar(v);
-    printvar(args...);
+    dump(v);
+    dump(args...);
 }
 
 //-----------------------------------------------------------------------------
@@ -109,14 +112,14 @@ inline Sep sep(char c)
 template< class Arg >
 inline void _print(Arg const& a)
 {
-    printvar(a);
+    dump(a);
 }
 
 template< class Arg, class... More >
 void _print(Arg const& a, More const& ...args)
 {
-    printvar(a);
-    printvar(' ');
+    dump(a);
+    dump(' ');
     _print(args...);
 }
 
@@ -124,14 +127,14 @@ void _print(Arg const& a, More const& ...args)
 template< class Arg >
 inline void _printsep(Sep s, Arg const& a)
 {
-    printvar(a);
+    dump(a);
 }
 
 template< class Arg, class... More >
 void _printsep(Sep s, Arg const& a, More const& ...args)
 {
-    printvar(a);
-    if(s.c) printvar(s.c);
+    dump(a);
+    if(s.c) dump(s.c);
     _printsep(s, args...);
 }
 
@@ -143,7 +146,7 @@ template< class... Args >
 void print(Args const& ...args)
 {
     _print(args...);
-    printvar('\n');
+    dump('\n');
 }
 
 /** print multiple variables, with a custom character separating
@@ -153,7 +156,7 @@ template< class... Args >
 void printsep(Sep s, Args const& ...args)
 {
     _printsep(s, args...);
-    printvar('\n');
+    dump('\n');
 }
 
 
@@ -164,7 +167,7 @@ void printsep(Sep s, Args const& ...args)
 /// terminate the recursion
 inline void _log(csubstr const fmt)
 {
-    printvar(fmt);
+    dump(fmt);
 }
 
 /** log a formatted message, without printing newline */
@@ -174,12 +177,12 @@ void _log(csubstr const fmt, Arg const& a, More const& ...args)
     auto pos = fmt.find("{}");
     if(pos == csubstr::npos)
     {
-        printvar(fmt);
+        dump(fmt);
     }
     else
     {
-        printvar(fmt.sub(0, pos));
-        printvar(a);
+        dump(fmt.sub(0, pos));
+        dump(a);
         _log(fmt.sub(pos+2), args...);
     }
 }
@@ -194,7 +197,7 @@ template< class... Args >
 void log(csubstr const fmt, Args const& ...args)
 {
     _log(fmt, args...);
-    printvar('\n');
+    dump('\n');
 }
 
 } // namespace logns
@@ -202,7 +205,7 @@ using logns::_log;
 using logns::log;
 using logns::_print;
 using logns::print;
-using logns::printvar;
+using logns::dump;
 using logns::set_logpump;
 using logns::get_logpump;
 

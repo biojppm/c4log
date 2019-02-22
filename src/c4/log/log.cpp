@@ -48,13 +48,13 @@ pfn_logpump get_logpump()
 
 namespace detail {
 
-PrintVarBuf::~PrintVarBuf()
+DumpBuf::~DumpBuf()
 {
     c4::afree(buf);
     buf = nullptr;
 }
 
-PrintVarBuf::PrintVarBuf()
+DumpBuf::DumpBuf()
     :
     buf((char*) c4::aalloc(32, alignof(std::max_align_t))),
     len(0),
@@ -63,7 +63,7 @@ PrintVarBuf::PrintVarBuf()
     memset(buf, 0, cap);
 }
 
-void PrintVarBuf::resize(size_t sz)
+void DumpBuf::resize(size_t sz)
 {
     if(sz < cap)
     {

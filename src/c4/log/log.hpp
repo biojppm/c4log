@@ -1,7 +1,7 @@
 #ifndef _c4_LOG_LOG_HPP_
 #define _c4_LOG_LOG_HPP_
 
-#include <c4/to_str.hpp>
+#include <c4/format.hpp>
 
 /** @file log.hpp */
 
@@ -13,7 +13,7 @@ namespace logns {
 /** a typedef for the function pointer to the function that dumps
  * characters to the log
  * @ingroup log */
-using pfn_logpump = void (*)(const char *c_str, size_t len);
+using pfn_logpump = void (*)(const char *chars, size_t num_chars);
 
 namespace detail {
 extern pfn_logpump logpump;
@@ -77,16 +77,16 @@ inline DumpBuf* _dump_buf()
 /** dump a single variable
  * @ingroup log
  */
-template<class T>
+template <class T>
 void dump(T const& v)
 {
-    detail::DumpBuf &buf = * detail::_dump_buf();
-    c4::catrs(&buf, v);
-    detail::logpump(buf.c_str(), buf.size());
+    detail::DumpBuf *buf = detail::_dump_buf();
+    c4::catrs(buf, v);
+    detail::logpump(buf->c_str(), buf->size());
 }
 
 /** dump several values without spaces between them */
-template<class T, class... More>
+template <class T, class... More>
 void dump(T const& v, More const& ...args)
 {
     dump(v);
@@ -109,13 +109,13 @@ inline Sep sep(char c)
 
 
 // terminate the recursion
-template< class Arg >
+template <class Arg>
 inline void _print(Arg const& a)
 {
     dump(a);
 }
 
-template< class Arg, class... More >
+template <class Arg, class... More>
 void _print(Arg const& a, More const& ...args)
 {
     dump(a);
@@ -124,13 +124,13 @@ void _print(Arg const& a, More const& ...args)
 }
 
 // terminate the recursion
-template< class Arg >
+template <class Arg>
 inline void _printsep(Sep s, Arg const& a)
 {
     dump(a);
 }
 
-template< class Arg, class... More >
+template <class Arg, class... More>
 void _printsep(Sep s, Arg const& a, More const& ...args)
 {
     dump(a);
@@ -142,7 +142,7 @@ void _printsep(Sep s, Arg const& a, More const& ...args)
 /** print multiple variables, with a space separating them. Prints
     newline at the end.
     @ingroup log */
-template< class... Args >
+template <class... Args>
 void print(Args const& ...args)
 {
     _print(args...);
@@ -152,7 +152,7 @@ void print(Args const& ...args)
 /** print multiple variables, with a custom character separating
     them. Prints newline at the end.
     @ingroup log */
-template< class... Args >
+template <class... Args>
 void printsep(Sep s, Args const& ...args)
 {
     _printsep(s, args...);
@@ -171,7 +171,7 @@ inline void _log(csubstr const fmt)
 }
 
 /** log a formatted message, without printing newline */
-template< class Arg, class... More >
+template <class Arg, class... More>
 void _log(csubstr const fmt, Arg const& a, More const& ...args)
 {
     auto pos = fmt.find("{}");
@@ -193,7 +193,7 @@ void _log(csubstr const fmt, Arg const& a, More const& ...args)
 log("the {} ate the {}", "cat", "mouse");
 @endcode
 @ingroup log */
-template< class... Args >
+template <class... Args>
 void log(csubstr const fmt, Args const& ...args)
 {
     _log(fmt, args...);

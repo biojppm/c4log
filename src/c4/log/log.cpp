@@ -19,11 +19,11 @@ thread_local const char* ScopedTermColor::curr = "";
 namespace detail {
 
 /** a default implementation for the logpump function */
-void _logpump_impl(const char *c_str, size_t len)
+void _logpump_impl(const char *chars, size_t num_chars)
 {
-    fwrite(c_str, 1, len, stdout);
+    fwrite(chars, 1, num_chars, stdout);
 #ifdef _MSC_VER
-    OutputDebugStringA(c_str);
+    OutputDebugStringA(chars);
 #endif
 }
 

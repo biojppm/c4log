@@ -11,7 +11,7 @@ c4_declare_project(C4LOG
 set(C4LOG_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/src)
 set(C4LOG_EXT_DIR ${CMAKE_CURRENT_LIST_DIR}/ext)
 
-c4log_require_module(c4core
+c4log_require_subproject(c4core
     SUBDIRECTORY ${C4LOG_EXT_DIR}/c4core)
 
 c4log_add_library(c4log

@@ -125,7 +125,7 @@ void _print(Arg const& a, More const& ...args)
 
 // terminate the recursion
 template <class Arg>
-inline void _printsep(Sep s, Arg const& a)
+inline void _printsep(Sep /*s*/, Arg const& a)
 {
     dump(a);
 }

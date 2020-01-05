@@ -3,7 +3,7 @@ project(c4log)
 
 include(./ext/c4core/cmake/c4Project.cmake)
 
-c4_declare_project(C4LOG
+c4_declare_project(c4log
     DESC "C++ logging utilities"
     AUTHOR "Joao Paulo Magalhaes <dev@jpmag.me>"
     MAJOR 0 MINOR 0 RELEASE 1)

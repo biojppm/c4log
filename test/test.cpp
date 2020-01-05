@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 namespace c4 {
-namespace log {
+namespace logns {
 
 std::string logrcv;
 void test_logpump(const char* c_str, size_t len)
@@ -16,11 +16,11 @@ struct SetupLogTest
     SetupLogTest()
     {
         logrcv.clear();
-        c4::log::set_logpump(&test_logpump);
+        c4::logns::set_logpump(&test_logpump);
     }
     ~SetupLogTest()
     {
-        c4::log::set_logpump(nullptr);
+        c4::logns::set_logpump(nullptr);
     }
 };
 
@@ -29,7 +29,7 @@ void test_print(const char* expected, Args && ...args)
 {
     {
         auto h = SetupLogTest();
-        c4::log::print(std::forward<Args>(args)...);
+        c4::logns::print(std::forward<Args>(args)...);
     }
     EXPECT_STREQ(logrcv.c_str(), expected);
 }
@@ -39,7 +39,7 @@ void test_printsep(const char* expected, Sep s, Args && ...args)
 {
     {
         auto h = SetupLogTest();
-        c4::log::printsep(s, std::forward<Args>(args)...);
+        c4::logns::printsep(s, std::forward<Args>(args)...);
     }
     EXPECT_STREQ(logrcv.c_str(), expected);
 }
@@ -49,7 +49,7 @@ void test_log(const char* expected, csubstr fmt, Args && ...args)
 {
     {
         auto h = SetupLogTest();
-        c4::log::log(fmt, std::forward<Args>(args)...);
+        c4::logns::log(fmt, std::forward<Args>(args)...);
     }
     EXPECT_STREQ(logrcv.c_str(), expected);
 }

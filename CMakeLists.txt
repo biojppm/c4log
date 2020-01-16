@@ -21,7 +21,12 @@ c4_add_library(c4log
       c4/log/log.cpp
       c4/log/color.hpp
     LIBS c4core
-    INC_DIRS ${C4LOG_SRC_DIR})
+    INC_DIRS
+       $<BUILD_INTERFACE:${C4LOG_SRC_DIR}> $<INSTALL_INTERFACE:include>
+    )
+
+c4_install_target(c4log)
+c4_install_exports()
 
 if(C4LOG_BUILD_TESTS)
     enable_testing() # this must be done here (and not inside the test dir)

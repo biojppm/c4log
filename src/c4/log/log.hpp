@@ -30,6 +30,11 @@ pfn_logpump get_logpump();
 
 namespace detail {
 
+#ifdef __GNUC__
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wtype-limits"
+#endif
+
 /** a minimal std::string-like zero-terminated char container, to be
  * used by dump(). We do not use std::string to save us from the
  * dependency and also from the heavy include. */
@@ -71,6 +76,10 @@ inline DumpBuf* _dump_buf()
 
 } // namespace detail
 
+
+#ifdef __GNUC__
+#   pragma GCC diagnostic pop
+#endif
 
 //-----------------------------------------------------------------------------
 

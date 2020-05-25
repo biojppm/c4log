@@ -27,7 +27,7 @@ void _logpump_impl(const char *chars, size_t num_chars)
 #endif
 }
 
-pfn_logpump logpump = &_logpump_impl;
+C4LOG_EXPORT pfn_logpump logpump = &_logpump_impl;
 
 } // namespace detail
 
@@ -88,3 +88,7 @@ void DumpBuf::resize(size_t sz)
 
 } // namespace logns
 } // namespace c4
+
+#ifdef C4_WIN
+#   include "c4/windows_pop.hpp"
+#endif

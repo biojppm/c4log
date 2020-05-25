@@ -2,6 +2,7 @@
 *.bck
 \#*
 *~
+.ccls-cache/
 
 # Visual Studio files
 .vs/

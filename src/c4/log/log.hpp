@@ -2,6 +2,7 @@
 #define _c4_LOG_LOG_HPP_
 
 #include <c4/format.hpp>
+#include <c4/log/export.hpp>
 
 /** @file log.hpp */
 
@@ -15,9 +16,8 @@ namespace logns {
  * @ingroup log */
 using pfn_logpump = void (*)(const char *chars, size_t num_chars);
 
-namespace detail {
-extern pfn_logpump logpump;
-} // namespace detail
+/** get the logpump function */
+pfn_logpump get_logpump();
 
 /** set the logpump function. To reset to the default implementation, pass a null pointer. */
 void set_logpump(pfn_logpump fn);
@@ -91,7 +91,9 @@ void dump(T const& v)
 {
     detail::DumpBuf *buf = detail::_dump_buf();
     c4::catrs(buf, v);
-    detail::logpump(buf->c_str(), buf->size());
+    auto fn = get_logpump();
+    C4_ASSERT(fn);
+    fn(buf->c_str(), buf->size());
 }
 
 /** dump several values without spaces between them */

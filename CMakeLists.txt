@@ -14,6 +14,7 @@ c4_require_subproject(c4core
 c4_add_library(c4log
     SOURCE_ROOT ${C4LOG_SRC_DIR}
     SOURCES
+      c4/log/export.hpp
       c4/log/log.hpp
       c4/log/log.cpp
       c4/log/color.hpp

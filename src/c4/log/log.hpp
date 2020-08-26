@@ -35,6 +35,11 @@ namespace detail {
 #   pragma GCC diagnostic ignored "-Wtype-limits"
 #endif
 
+#if defined(_MSC_VER)
+#   pragma warning(push)
+#   pragma warning(disable: 4296/*expression is always 'boolean_value'*/)
+#endif
+
 /** a minimal std::string-like zero-terminated char container, to be
  * used by dump(). We do not use std::string to save us from the
  * dependency and also from the heavy include. */
@@ -76,10 +81,15 @@ inline DumpBuf* _dump_buf()
 
 } // namespace detail
 
-
 #ifdef __GNUC__
 #   pragma GCC diagnostic pop
 #endif
+
+#if defined(_MSC_VER)
+#   pragma warning(pop)
+#   pragma warning(disable: 4296/*expression is always 'boolean_value'*/)
+#endif
+
 
 //-----------------------------------------------------------------------------
 

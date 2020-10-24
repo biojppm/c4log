@@ -1,5 +1,4 @@
 #include "c4/log/log.hpp"
-#include "c4/log/color.hpp"
 #include "c4/memory_resource.hpp"
 
 #include <stdio.h>
@@ -9,12 +8,11 @@
 #   include "c4/windows_push.hpp"
 #   include <windef.h>
 #   include <debugapi.h>
+#   include "c4/windows_pop.hpp"
 #endif
 
 namespace c4 {
 namespace logns {
-
-thread_local const char* ScopedTermColor::curr = "";
 
 namespace detail {
 
@@ -88,7 +86,3 @@ void DumpBuf::resize(size_t sz)
 
 } // namespace logns
 } // namespace c4
-
-#ifdef C4_WIN
-#   include "c4/windows_pop.hpp"
-#endif

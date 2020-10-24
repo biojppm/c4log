@@ -17,7 +17,6 @@ c4_add_library(c4log
       c4/log/export.hpp
       c4/log/log.hpp
       c4/log/log.cpp
-      c4/log/color.hpp
     LIBS c4core
     INC_DIRS
        $<BUILD_INTERFACE:${C4LOG_SRC_DIR}> $<INSTALL_INTERFACE:include>

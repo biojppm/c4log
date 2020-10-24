@@ -99,10 +99,10 @@ inline DumpBuf* _dump_buf()
 template <class T>
 void dump(T const& v)
 {
-    detail::DumpBuf *buf = detail::_dump_buf();
-    c4::catrs(buf, v);
     auto fn = get_logpump();
     C4_ASSERT(fn);
+    detail::DumpBuf *buf = detail::_dump_buf();
+    c4::catrs(buf, v);
     fn(buf->c_str(), buf->size());
 }
 
@@ -221,7 +221,73 @@ void log(csubstr const fmt, Args const& ...args)
     dump('\n');
 }
 
+
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+/** @defgroup termcolor */
+
+// https://misc.flogisoft.com/bash/tip_colors_and_formatting
+
+/** term colors
+ * @ingroup termcolor */
+constexpr const char bold            [] = "\033[1m";
+constexpr const char bold_reset      [] = "\033[21m";
+constexpr const char dim             [] = "\033[2m";
+constexpr const char dim_reset       [] = "\033[22m";
+constexpr const char underlined      [] = "\033[4m";
+constexpr const char underlined_reset[] = "\033[24m";
+constexpr const char blink           [] = "\033[5m";
+constexpr const char blink_reset     [] = "\033[25m";
+constexpr const char reverse         [] = "\033[7m";
+constexpr const char reverse_reset   [] = "\033[27m";
+constexpr const char hidden          [] = "\033[8m";
+constexpr const char hidden_reset    [] = "\033[28m";
+
+/** foreground terminal colors
+ * @ingroup termcolor */
+constexpr const char fg_reset        [] = "\033[0m";
+constexpr const char fg_black        [] = "\033[30m";
+constexpr const char fg_red          [] = "\033[31m";
+constexpr const char fg_green        [] = "\033[32m";
+constexpr const char fg_yellow       [] = "\033[33m";
+constexpr const char fg_blue         [] = "\033[34m";
+constexpr const char fg_magenta      [] = "\033[35m";
+constexpr const char fg_cyan         [] = "\033[36m";
+constexpr const char fg_light_gray   [] = "\033[37m";
+constexpr const char fg_dark_gray    [] = "\033[90m";
+constexpr const char fg_light_red    [] = "\033[91m";
+constexpr const char fg_light_green  [] = "\033[92m";
+constexpr const char fg_light_yellow [] = "\033[93m";
+constexpr const char fg_light_blue   [] = "\033[94m";
+constexpr const char fg_light_magenta[] = "\033[95m";
+constexpr const char fg_light_cyan   [] = "\033[96m";
+constexpr const char fg_white        [] = "\033[97m";
+
+/** background terminal colors
+ * @ingroup termcolor */
+constexpr const char bg_reset        [] = "\033[49m";
+constexpr const char bg_black        [] = "\033[40m";
+constexpr const char bg_red          [] = "\033[41m";
+constexpr const char bg_green        [] = "\033[42m";
+constexpr const char bg_yellow       [] = "\033[43m";
+constexpr const char bg_blue         [] = "\033[44m";
+constexpr const char bg_magenta      [] = "\033[45m";
+constexpr const char bg_cyan         [] = "\033[46m";
+constexpr const char bg_light_gray   [] = "\033[47m";
+constexpr const char bg_dark_gray    [] = "\033[100m";
+constexpr const char bg_light_red    [] = "\033[101m";
+constexpr const char bg_light_green  [] = "\033[102m";
+constexpr const char bg_light_yellow [] = "\033[103m";
+constexpr const char bg_light_blue   [] = "\033[104m";
+constexpr const char bg_light_magenta[] = "\033[105m";
+constexpr const char bg_light_cyan   [] = "\033[106m";
+constexpr const char bg_white        [] = "\033[107m";
+
+
 } // namespace logns
+
 using logns::_log;
 using logns::log;
 using logns::_print;

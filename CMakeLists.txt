@@ -1,12 +1,10 @@
-cmake_minimum_required(VERSION 3.2)
-project(c4log)
-
+cmake_minimum_required(VERSION 3.12)
 include(./ext/c4core/cmake/c4Project.cmake)
-
-c4_declare_project(c4log
-    DESC "C++ logging utilities"
-    AUTHOR "Joao Paulo Magalhaes <dev@jpmag.me>"
-    MAJOR 0 MINOR 0 RELEASE 1)
+project(c4log
+    DESCRIPTION "C++ logging utilities"
+    HOMEPAGE_URL "https://github.com/biojppm/c4log/")
+c4_project(VERSION 0.0.1
+    AUTHOR "Joao Paulo Magalhaes <dev@jpmag.me>")
 
 c4_require_subproject(c4core
     SUBDIRECTORY ${C4LOG_EXT_DIR}/c4core)

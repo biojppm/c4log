@@ -8,6 +8,8 @@
 
 /** @defgroup log */
 
+/** @defgroup log_font_styles */
+
 namespace c4 {
 namespace logns {
 
@@ -59,9 +61,6 @@ struct DumpBuf
 
     void resize(size_t sz);
 
-          char& operator[] (size_t i)       { C4_ASSERT(i >= 0 && i < len); return *(buf + i); }
-    const char& operator[] (size_t i) const { C4_ASSERT(i >= 0 && i < len); return *(buf + i); }
-
           char* data()       { return buf; }
     const char* data() const { return buf; }
 
@@ -103,7 +102,7 @@ void dump(T const& v)
     C4_ASSERT(fn);
     detail::DumpBuf *buf = detail::_dump_buf();
     c4::catrs(buf, v);
-    fn(buf->c_str(), buf->size());
+    fn(buf->data(), buf->size());
 }
 
 /** dump several values without spaces between them */
@@ -116,67 +115,78 @@ void dump(T const& v, More const& ...args)
 
 //-----------------------------------------------------------------------------
 
-/** @ingroup log */
-struct Sep
-{
-    char c;
-    Sep(char c_) : c(c_) {}
-};
-
-inline Sep sep(char c)
-{
-    return Sep(c);
-}
-
-
-// terminate the recursion
+/** terminate the variadic recursion
+ @ingroup log */
 template <class Arg>
-inline void _print(Arg const& a)
+inline void print_(Arg const& a)
 {
     dump(a);
 }
 
+/** print multiple variables with a space separating them. No newline at the end.
+ @ingroup log */
 template <class Arg, class... More>
-void _print(Arg const& a, More const& ...args)
+void print_(Arg const& a, More const& ...args)
 {
     dump(a);
     dump(' ');
-    _print(args...);
+    print_(args...);
 }
 
-// terminate the recursion
-template <class Arg>
-inline void _printsep(Sep /*s*/, Arg const& a)
-{
-    dump(a);
-}
-
-template <class Arg, class... More>
-void _printsep(Sep s, Arg const& a, More const& ...args)
-{
-    dump(a);
-    if(s.c) dump(s.c);
-    _printsep(s, args...);
-}
-
-
-/** print multiple variables, with a space separating them. Prints
-    newline at the end.
-    @ingroup log */
+/** print multiple variables, with a space separating them.
+ * Prints newline at the end.
+ * @ingroup log */
 template <class... Args>
 void print(Args const& ...args)
 {
-    _print(args...);
+    print_(args...);
     dump('\n');
 }
 
-/** print multiple variables, with a custom character separating
-    them. Prints newline at the end.
-    @ingroup log */
-template <class... Args>
-void printsep(Sep s, Args const& ...args)
+
+//-----------------------------------------------------------------------------
+
+/** @ingroup log */
+template<class T>
+struct Sep
 {
-    _printsep(s, args...);
+    T const& C4_RESTRICT s;
+    Sep(T const& C4_RESTRICT s) : c(s) {}
+};
+
+/** @ingroup log */
+template<class T>
+inline Sep<T> sep(T const& C4_RESTRICT s)
+{
+    return Sep<T>(s);
+}
+
+/** terminate the variadic recursion
+ * @ingroup log */
+template <class T, class Arg>
+inline void printsep_(Sep<T> /*s*/, Arg const& a)
+{
+    dump(a);
+}
+
+/** print multiple variables with a custom separator between them.
+ * No newline at the end.
+ * @ingroup log */
+template <class T, class Arg, class... More>
+void printsep_(Sep<T> s, Arg const& a, More const& ...args)
+{
+    dump(a);
+    dump(s.s);
+    printsep_(s, args...);
+}
+
+/** print multiple variables, with a custom separator between each pair.
+ * Prints newline at the end.
+ * @ingroup log */
+template <class T, class... Args>
+void printsep(Sep<T> s, Args const& ...args)
+{
+    printsep_(s, args...);
     dump('\n');
 }
 
@@ -185,15 +195,17 @@ void printsep(Sep s, Args const& ...args)
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-/// terminate the recursion
-inline void _log(csubstr const fmt)
+
+/** log a formatted message, without printing newline.
+ * terminate the variadic recursion */
+inline void log_(csubstr const fmt)
 {
     dump(fmt);
 }
 
 /** log a formatted message, without printing newline */
 template <class Arg, class... More>
-void _log(csubstr const fmt, Arg const& a, More const& ...args)
+void log_(csubstr const fmt, Arg const& a, More const& ...args)
 {
     auto pos = fmt.find("{}");
     if(pos == csubstr::npos)
@@ -204,10 +216,9 @@ void _log(csubstr const fmt, Arg const& a, More const& ...args)
     {
         dump(fmt.sub(0, pos));
         dump(a);
-        _log(fmt.sub(pos+2), args...);
+        log_(fmt.sub(pos+2), args...);
     }
 }
-
 
 /** log a formatted message. For example:
 @begincode
@@ -217,7 +228,7 @@ log("the {} ate the {}", "cat", "mouse");
 template <class... Args>
 void log(csubstr const fmt, Args const& ...args)
 {
-    _log(fmt, args...);
+    log_(fmt, args...);
     dump('\n');
 }
 
@@ -226,27 +237,11 @@ void log(csubstr const fmt, Args const& ...args)
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
-/** @defgroup termcolor */
 
 // https://misc.flogisoft.com/bash/tip_colors_and_formatting
 
-/** term colors
- * @ingroup termcolor */
-constexpr const char bold            [] = "\033[1m";
-constexpr const char bold_reset      [] = "\033[21m";
-constexpr const char dim             [] = "\033[2m";
-constexpr const char dim_reset       [] = "\033[22m";
-constexpr const char underlined      [] = "\033[4m";
-constexpr const char underlined_reset[] = "\033[24m";
-constexpr const char blink           [] = "\033[5m";
-constexpr const char blink_reset     [] = "\033[25m";
-constexpr const char reverse         [] = "\033[7m";
-constexpr const char reverse_reset   [] = "\033[27m";
-constexpr const char hidden          [] = "\033[8m";
-constexpr const char hidden_reset    [] = "\033[28m";
-
 /** foreground terminal colors
- * @ingroup termcolor */
+ * @ingroup log_font_styles */
 constexpr const char fg_reset        [] = "\033[0m";
 constexpr const char fg_black        [] = "\033[30m";
 constexpr const char fg_red          [] = "\033[31m";
@@ -266,7 +261,7 @@ constexpr const char fg_light_cyan   [] = "\033[96m";
 constexpr const char fg_white        [] = "\033[97m";
 
 /** background terminal colors
- * @ingroup termcolor */
+ * @ingroup log_font_styles */
 constexpr const char bg_reset        [] = "\033[49m";
 constexpr const char bg_black        [] = "\033[40m";
 constexpr const char bg_red          [] = "\033[41m";
@@ -285,14 +280,31 @@ constexpr const char bg_light_magenta[] = "\033[105m";
 constexpr const char bg_light_cyan   [] = "\033[106m";
 constexpr const char bg_white        [] = "\033[107m";
 
+/** term font styles
+ * @ingroup log_font_styles */
+constexpr const char st_bold            [] = "\033[1m";
+constexpr const char st_bold_reset      [] = "\033[21m";
+constexpr const char st_dim             [] = "\033[2m";
+constexpr const char st_dim_reset       [] = "\033[22m";
+constexpr const char st_underlined      [] = "\033[4m";
+constexpr const char st_underlined_reset[] = "\033[24m";
+constexpr const char st_blink           [] = "\033[5m";
+constexpr const char st_blink_reset     [] = "\033[25m";
+constexpr const char st_reverse         [] = "\033[7m";
+constexpr const char st_reverse_reset   [] = "\033[27m";
+constexpr const char st_hidden          [] = "\033[8m";
+constexpr const char st_hidden_reset    [] = "\033[28m";
 
 } // namespace logns
 
-using logns::_log;
-using logns::log;
-using logns::_print;
-using logns::print;
 using logns::dump;
+using logns::print;
+using logns::printsep;
+using logns::log;
+using logns::print_;
+using logns::printsep_;
+using logns::log_;
+
 using logns::set_logpump;
 using logns::get_logpump;
 

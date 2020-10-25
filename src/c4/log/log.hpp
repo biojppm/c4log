@@ -151,7 +151,7 @@ template<class T>
 struct Sep
 {
     T const& C4_RESTRICT s;
-    Sep(T const& C4_RESTRICT s) : c(s) {}
+    Sep(T const& C4_RESTRICT s_) : s(s_) {}
 };
 
 /** @ingroup log */

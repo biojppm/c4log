@@ -59,12 +59,12 @@ struct DumpBuf
     size_t size() const { return len; }
     size_t capacity() const { return cap; }
 
+    void reserve(size_t sz);
     void resize(size_t sz);
+    void shrink_to_fit();
 
           char* data()       { return buf; }
     const char* data() const { return buf; }
-
-    const char* c_str() const { return buf; }
 };
 
 inline c4::substr to_substr(DumpBuf const& b)
@@ -95,14 +95,23 @@ inline DumpBuf* _dump_buf()
 /** dump a single variable
  * @ingroup log
  */
+template<class T>
+C4_ALWAYS_INLINE void dump_(T const& C4_RESTRICT v, pfn_logpump fn, detail::DumpBuf *buf)
+{
+    catrs(buf, v);
+    fn(buf->data(), buf->size());
+}
+
+/** dump a single variable
+ * @ingroup log
+ */
 template <class T>
-void dump(T const& v)
+void dump(T const& C4_RESTRICT v)
 {
     auto fn = get_logpump();
     C4_ASSERT(fn);
     detail::DumpBuf *buf = detail::_dump_buf();
-    c4::catrs(buf, v);
-    fn(buf->data(), buf->size());
+    dump_(v, fn, buf);
 }
 
 /** dump several values without spaces between them */

@@ -61,25 +61,35 @@ DumpBuf::DumpBuf()
     memset(buf, 0, cap);
 }
 
-void DumpBuf::resize(size_t sz)
+void DumpBuf::reserve(size_t ncap)
 {
-    if(sz < cap)
-    {
-        memset(buf+sz, 0, cap-sz);
-        len = sz;
-        return;
-    }
-
-    // double the capacity or use the size if double is not enough
-    size_t ncap = cap*2 > sz+1 ? cap*2 : sz+1;
-
+    if(ncap <= cap) return;
     char *tmp = (char*) c4::aalloc(ncap, alignof(std::max_align_t));
-    memcpy(tmp, buf, cap);
-    memset(tmp+cap, 0, ncap-cap);
+    memcpy(tmp, buf, len);
     c4::afree(buf);
     buf = tmp;
     cap = ncap;
+}
+
+void DumpBuf::resize(size_t sz)
+{
+    if(sz <= cap)
+    {
+        len = sz;
+        return;
+    }
+    // double the capacity or use the requested size if double is not enough
+    reserve(cap*2 >= sz ? cap*2 : sz);
     len = sz;
+}
+
+void DumpBuf::shrink_to_fit()
+{
+    char *tmp = (char*) c4::aalloc(len, alignof(std::max_align_t));
+    memcpy(tmp, buf, len);
+    c4::afree(buf);
+    buf = tmp;
+    cap = len;
 }
 
 } // namespace detail

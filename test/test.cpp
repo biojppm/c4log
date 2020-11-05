@@ -1,7 +1,11 @@
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <c4/std/string.hpp>
+#include <iostream>
+#include <c4/substr.hpp>
 #include <c4/log/log.hpp>
 #include <string>
-#include <gtest/gtest.h>
+#include <vector>
+#include <doctest/doctest.h>
 
 //------------------------------------------------------------------------
 
@@ -95,7 +99,7 @@ LargeTypeWithSizes<T> make_(size_t num)
     return lt;
 }
 
-TEST(dump, overloading_dump_uses_less_space)
+TEST_CASE("dump.overloading_dump_uses_less_space")
 {
     auto setup = SetupLogTest();
 
@@ -105,13 +109,13 @@ TEST(dump, overloading_dump_uses_less_space)
 
     auto var_and_size = make_<LargeType2>(10);
     c4::logns::print(var_and_size.var);
-    
+
     size_t szafter = buf->capacity();
-    EXPECT_GT(szafter, szbefore);
-    EXPECT_EQ(szafter, var_and_size.szmax); // because we were using powers of two
+    CHECK_GT(szafter, szbefore);
+    CHECK_EQ(szafter, var_and_size.szmax); // because we were using powers of two
 }
 
-TEST(dump, overloading_to_chars_uses_more_space)
+TEST_CASE("dump.overloading_to_chars_uses_more_space")
 {
     auto setup = SetupLogTest();
 
@@ -121,52 +125,52 @@ TEST(dump, overloading_to_chars_uses_more_space)
 
     auto var_and_size = make_<LargeType1>(10);
     c4::logns::print(var_and_size.var);
-    
+
     size_t szafter = buf->capacity();
-    EXPECT_GT(szafter, szbefore);
-    EXPECT_EQ(szafter, var_and_size.sztotal); // because we request 2046 from 8, so the resize will pick 2046 instead of 16 (the next power of two) 
+    CHECK_GT(szafter, szbefore);
+    CHECK_EQ(szafter, var_and_size.sztotal); // because we request 2046 from 8, so the resize will pick 2046 instead of 16 (the next power of two)
 }
 
 
 //------------------------------------------------------------------------
 
 template <class... Args>
-void test_print(const char* expected, Args && ...args)
+void test_print(c4::csubstr expected, Args && ...args)
 {
     {
         auto h = SetupLogTest();
         c4::logns::print(std::forward<Args>(args)...);
     }
-    EXPECT_STREQ(logrcv.c_str(), expected);
+    CHECK_EQ(c4::to_csubstr(logrcv), expected);
 }
 
 template <class T, class... Args>
-void test_printsep(const char* expected, c4::logns::Sep<T> s, Args && ...args)
+void test_printsep(c4::csubstr expected, c4::logns::Sep<T> s, Args && ...args)
 {
     {
         auto h = SetupLogTest();
         c4::logns::printsep(s, std::forward<Args>(args)...);
     }
-    EXPECT_STREQ(logrcv.c_str(), expected);
+    CHECK_EQ(c4::to_csubstr(logrcv), expected);
 }
 
 template <class... Args>
-void test_log(const char* expected, c4::csubstr fmt, Args && ...args)
+void test_log(c4::csubstr expected, c4::csubstr fmt, Args && ...args)
 {
     {
         auto h = SetupLogTest();
         c4::logns::log(fmt, std::forward<Args>(args)...);
     }
-    EXPECT_STREQ(logrcv.c_str(), expected);
+    CHECK_EQ(c4::to_csubstr(logrcv), expected);
 }
 
-TEST(log, print)
+TEST_CASE("log.print")
 {
     test_print("FDX\n", "FDX");
     test_print("FDX 1 2 3\n", "FDX", 1, 2, 3);
 }
 
-TEST(log, printsep)
+TEST_CASE("log.printsep")
 {
     using namespace c4::logns;
     test_printsep("FDX\n", sep('-'), "FDX");
@@ -175,7 +179,7 @@ TEST(log, printsep)
     test_printsep("FDX---wtf---1---wtf---2---wtf---3\n", sep(std::string("---wtf---")), "FDX", 1, 2, 3);
 }
 
-TEST(log, log)
+TEST_CASE("log.log")
 {
     test_log("the cat ate the mouse\n", "the {} ate the {}", "cat", "mouse");
 }

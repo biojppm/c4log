@@ -247,6 +247,11 @@ void log(csubstr const fmt, Args const& ...args)
 //-----------------------------------------------------------------------------
 
 
+C4_SUPPRESS_WARNING_GCC_PUSH
+#if __GNUC__ > 5
+C4_SUPPRESS_WARNING_GCC("-Wunused-const-variable")
+#endif
+
 // https://misc.flogisoft.com/bash/tip_colors_and_formatting
 
 /** foreground terminal colors
@@ -303,6 +308,8 @@ constexpr const char st_reverse         [] = "\033[7m";
 constexpr const char st_reverse_reset   [] = "\033[27m";
 constexpr const char st_hidden          [] = "\033[8m";
 constexpr const char st_hidden_reset    [] = "\033[28m";
+
+C4_SUPPRESS_WARNING_GCC_POP
 
 } // namespace logns
 

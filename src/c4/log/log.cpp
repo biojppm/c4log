@@ -11,6 +11,8 @@
 #   include "c4/windows_pop.hpp"
 #endif
 
+C4_SUPPRESS_WARNING_GCC_CLANG_WITH_PUSH("-Wold-style-cast")
+
 namespace c4 {
 namespace logns {
 
@@ -100,3 +102,5 @@ C4_SUPPRESS_WARNING_GCC_CLANG_POP
 
 } // namespace logns
 } // namespace c4
+
+C4_SUPPRESS_WARNING_GCC_CLANG_POP

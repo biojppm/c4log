@@ -91,7 +91,7 @@ LargeTypeWithSizes<T> make_(size_t num)
     strvec.resize(num);
     for(size_t i = 0; i < num; ++i)
     {
-        strvec[i].resize((size_t(1u) << (i + 1)) - 1, (char)('0' + i));
+        strvec[i].resize((size_t(1u) << (i + 1)) - 1, static_cast<char>('0' + i));
         strvec[i] += '\n';
         lt.szmax = std::max(strvec[i].size(), lt.szmax);
         lt.sztotal += strvec[i].size();

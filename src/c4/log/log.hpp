@@ -2,6 +2,7 @@
 #define _c4_LOG_LOG_HPP_
 
 #include <c4/format.hpp>
+#include <c4/types.hpp>
 #include <c4/log/export.hpp>
 
 /** @file log.hpp */

@@ -16,8 +16,6 @@ C4_SUPPRESS_WARNING_GCC_CLANG_WITH_PUSH("-Wold-style-cast")
 namespace c4 {
 namespace logns {
 
-C4_SUPPRESS_WARNING_GCC_CLANG_WITH_PUSH("-Wold-style-cast")
-
 namespace detail {
 
 /** a default implementation for the logpump function */
@@ -97,9 +95,6 @@ void DumpBuf::shrink_to_fit()
 }
 
 } // namespace detail
-
-C4_SUPPRESS_WARNING_GCC_CLANG_POP
-
 } // namespace logns
 } // namespace c4
 

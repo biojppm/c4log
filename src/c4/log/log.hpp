@@ -48,7 +48,10 @@ namespace detail {
  * dependency and also from the heavy include. */
 struct DumpBuf
 {
-    C4_NO_COPY_OR_MOVE(DumpBuf);
+    DumpBuf(DumpBuf const&) = delete;
+    DumpBuf(DumpBuf &&) = delete;
+    DumpBuf& operator= (DumpBuf const&) = delete;
+    DumpBuf& operator= (DumpBuf &&) = delete;
 
     DumpBuf();
     ~DumpBuf();

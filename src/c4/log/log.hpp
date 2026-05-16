@@ -252,7 +252,7 @@ void log(csubstr const fmt, Args const& ...args)
 
 
 C4_SUPPRESS_WARNING_GCC_PUSH
-#if __GNUC__ > 5
+#if defined(__GNUC__) && __GNUC__ > 5
 C4_SUPPRESS_WARNING_GCC("-Wunused-const-variable")
 #endif
 

@@ -20,13 +20,13 @@ namespace logns {
 using pfn_logpump = void (*)(const char *chars, size_t num_chars);
 
 /** get the logpump function */
-pfn_logpump get_logpump();
+C4LOG_EXPORT pfn_logpump get_logpump();
 
 /** set the logpump function. To reset to the default implementation, pass a null pointer. */
-void set_logpump(pfn_logpump fn);
+C4LOG_EXPORT void set_logpump(pfn_logpump fn);
 
 /** get a pointer to the current logpump implementation */
-pfn_logpump get_logpump();
+C4LOG_EXPORT pfn_logpump get_logpump();
 
 
 //-----------------------------------------------------------------------------
@@ -46,7 +46,7 @@ namespace detail {
 /** a minimal std::string-like zero-terminated char container, to be
  * used by dump(). We do not use std::string to save us from the
  * dependency and also from the heavy include. */
-struct DumpBuf
+struct C4LOG_EXPORT DumpBuf
 {
     DumpBuf(DumpBuf const&) = delete;
     DumpBuf(DumpBuf &&) = delete;
